@@ -1,10 +1,21 @@
 require 'spec_helper'
 
 describe "UserPages" do
+
+  subject { page }
+
+  describe "profile page" do
+    let(:user) { FactoryGirl.create(:user) }
+    before { visit user_path(user) }
+
+    it { should have_content(user.name) }
+    it { should have_title(user.name) }
+  end
+
   describe "signup page" do
-    it "works! (now write some real specs)" do
-      # Run the generator again with the --webrat flag if you want to use webrat methods/matchers
-      visit signup_path
-    end
+    before { visit signup_path }
+
+    it { should have_content('Sign up') }
+    it { should have_title('Sign up') }
   end
 end
