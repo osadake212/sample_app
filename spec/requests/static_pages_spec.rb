@@ -1,6 +1,9 @@
 require 'spec_helper'
 
 describe "StaticPages" do
+
+  subject { page }
+
   describe "GET /static_pages/home" do
     before { visit root_path}
     it "should have the content 'Sample App'" do
@@ -13,6 +16,22 @@ describe "StaticPages" do
 
     it "should not have a custom page title" do
       expect(page).not_to have_title('| Home')
+    end
+
+    describe "for singed-in users" do
+      let(:user) { FactoryGirl.create(:user) }
+      before do
+        FactoryGirl.create(:micropost, user: user, content: "Lorem ipsum")
+        FactoryGirl.create(:micropost, user: user, content: "Dolor sit amet")
+        sign_in user
+        visit root_path
+      end
+
+      it "should render the user's feed" do
+        user.feed.each do |item|
+          expect(page).to have_selector("li##{item.id}", text: item.content)
+        end
+      end
     end
   end
 
